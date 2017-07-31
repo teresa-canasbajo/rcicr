@@ -40,14 +40,15 @@
 #' @param constant Optional number specifying the value used as constant scaling factor for the noise (only works for \code{scaling='constant'}).
 #' @param mask Optional 2D matrix that defines the mask to be applied to the CI (1 = masked, 0 = unmasked). May also be a string specifying the path to a grayscale PNG image (black = masked, white = unmasked). Default: NA.
 #' @param zmap Boolean specifying whether a z-map should be created (default: FALSE).
-#' @param zmapmethod String specifying the method to create the z-map. Can be: \code{quick} (default), \code{t.test}.
+#' @param zmapmethod String specifying the method to create the z-map. Can be: \code{quick} (default), \code{t.test} or \code{chauvin}.
+#' @param chauvin_mask 2D matrix that defines the neutral regions of the CI (1 = neutral, 0 = non-neutral). May also be a string specifying the path to a grayscale PNG image (white = neutral, black = non-neutral). Required parameter if zmapmethod is set to \code{chauvin}.
 #' @param zmapdecoration Optional boolean specifying whether the Z-map should be plotted with margins, text (sigma, threshold) and a scale (default: TRUE).
 #' @param sigma Integer specifying the amount of smoothing to apply when generating the z-maps (default: 3).
 #' @param threshold Integer specifying the threshold z-score (default: 3). Z-scores below the threshold will not be plotted on the z-map.
 #' @param zmaptargetpath Optional string specifying path to save z-map PNGs to (default: ./zmaps).
 #' @param n_cores Optional integer specifying the number of CPU cores to use to generate the z-map (default: detectCores()).
 #' @return List of pixel matrix of classification noise only, scaled classification noise only, base image only and combined.
-generateCI <- function(stimuli, responses, baseimage, rdata, participants=NA, save_as_png=TRUE, filename='', targetpath='./cis', antiCI=FALSE, scaling='independent', constant=0.1, zmap = F, zmapmethod = 'quick', zmapdecoration = T, sigma = 3, threshold = 3, zmaptargetpath = './zmaps', n_cores = detectCores(), mask=NA) {
+generateCI <- function(stimuli, responses, baseimage, rdata, participants=NA, save_as_png=TRUE, filename='', targetpath='./cis', antiCI=FALSE, scaling='independent', constant=0.1, zmap = F, zmapmethod = 'chauvin', chauvin_mask=NA, zmapdecoration = T, sigma = 3, threshold = 3, zmaptargetpath = './zmaps', n_cores = detectCores(), mask=NA) {
 
   # Rename zmap to zmapbool so we can use zmap for the actual zmap
   zmapbool <- zmap
@@ -151,8 +152,6 @@ generateCI <- function(stimuli, responses, baseimage, rdata, participants=NA, sa
     ci <- apply(pid.cis, c(1,2), mean) #* sqrt(npids)
   }
 
-
-
   # Mask #
 
   # Check if a mask has been set
@@ -180,7 +179,7 @@ generateCI <- function(stimuli, responses, baseimage, rdata, participants=NA, sa
     }
 
     # Check if mask is of the same size as the stimuli (i.e. img_size)
-    if (!all(dim(mask_matrix) == 512)) {
+    if (!all(dim(mask_matrix) == img_size)) {
       stop(paste0('Mask is not of the same dimensions as the stimuli! (stimulus dimensions: ', img_size, ' x ', img_size, '; mask dimensions: ', dim(mask_matrix)[2], ' by ', dim(mask_matrix)[1], ').'))
     }
 
@@ -297,6 +296,63 @@ generateCI <- function(stimuli, responses, baseimage, rdata, participants=NA, sa
       zmap <- sign(ci) * abs(qnorm(pmap/2))
 
     }
+
+    if(zmapmethod == 'chauvin') {
+      # Load the Chauvin mask (that defines the neutral regions of the CI)
+
+      # If mask argument is a string, treat it as a path to a bitmap and try to read it into a matrix
+      # If mask is a matrix, use it as is
+      # Else, throw error
+      if (typeof(chauvin_mask) == 'character') {
+        chauvin_mask_matrix <- png::readPNG(chauvin_mask)
+
+        # Check if the PNG uses a greyscale color palette
+        if (length(dim(chauvin_mask_matrix)) != 2) {
+          # If the PNG uses the full color palette but the image itself is totally greyscale, read it in anyway
+          # Thanks https://stackoverflow.com/a/30850654
+          if (all(sapply(list(chauvin_mask_matrix[,,1], chauvin_mask_matrix[,,2], chauvin_mask_matrix[,,3]), FUN = identical, chauvin_mask_matrix[,,1]))) {
+            chauvin_mask_matrix <- chauvin_mask_matrix[,,1]
+          }
+          # Else, throw error
+          stop('This PNG is not encoded with a greyscale color palette and could not be converted to this encoding either. In other words, this is not a greyscale image.')
+        }
+      } else if (typeof(mask) == 'double' && length(dim(mask)) == 2) {
+        chauvin_mask_matrix <- mask
+      } else {
+        stop('The mask argument is neither a string nor a matrix!')
+      }
+
+      # Check if mask is of the same size as the stimuli (i.e. img_size)
+      if (!all(dim(chauvin_mask_matrix) == img_size)) {
+        stop(paste0('Mask is not of the same dimensions as the stimuli! (stimulus dimensions: ', img_size, ' x ', img_size, '; mask dimensions: ', dim(chauvin_mask_matrix)[2], ' by ', dim(chauvin_mask_matrix)[1], ').'))
+      }
+
+      # Check if the mask is binary
+      if (length(chauvin_mask_matrix) != sum(chauvin_mask_matrix %in% c(0, 1))) {
+        stop('This mask contains values other than 0 or 1!')
+      }
+
+      # Convert mask to boolean matrix (black == 0 == masked)
+      chauvin_mask <- chauvin_mask_matrix == 0
+
+      # Apply the mask to the CI
+      ci[chauvin_mask] <- NA
+
+      # Calculate average CI pixel value
+      neutral_mean = mean(na.omit(ci))
+
+      # Calculate standard deviation of CI pixel values
+      neutral_sd = sd(na.omit(ci))
+
+      # Calculate Zmap using method of Chauvin (Chauvin et al, 2005)
+      zmap = sapply(c(ci), function(x) {
+        (x - neutral_mean) / neutral_sd
+      })
+      dim(zmap) <- c(img_size, img_size)
+    }
+
+    print(zmap)
+    str(zmap)
 
     # Pass zmap object to plotZmap for plotting
     plotZmap(zmap = zmap, bgimage = combined, filename = baseimage, sigma = sigma, threshold = threshold, size = img_size, decoration = zmapdecoration)

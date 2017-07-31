@@ -7,8 +7,9 @@
 generateCI(stimuli, responses, baseimage, rdata, participants = NA,
   save_as_png = TRUE, filename = "", targetpath = "./cis",
   antiCI = FALSE, scaling = "independent", constant = 0.1, zmap = F,
-  zmapmethod = "quick", zmapdecoration = T, sigma = 3, threshold = 3,
-  zmaptargetpath = "./zmaps", n_cores = detectCores(), mask = NA)
+  zmapmethod = "chauvin", chauvin_mask = NA, zmapdecoration = T,
+  sigma = 3, threshold = 3, zmaptargetpath = "./zmaps",
+  n_cores = detectCores(), mask = NA)
 }
 \arguments{
 \item{stimuli}{Vector with stimulus numbers (should be numeric) that were presented in the order of the response vector. Stimulus numbers must match those in file name of the generated stimuli.}
@@ -35,7 +36,9 @@ generateCI(stimuli, responses, baseimage, rdata, participants = NA,
 
 \item{zmap}{Boolean specifying whether a z-map should be created (default: FALSE).}
 
-\item{zmapmethod}{String specifying the method to create the z-map. Can be: \code{quick} (default), \code{t.test}.}
+\item{zmapmethod}{String specifying the method to create the z-map. Can be: \code{quick} (default), \code{t.test} or \code{chauvin}.}
+
+\item{chauvin_mask}{2D matrix that defines the neutral regions of the CI (1 = neutral, 0 = non-neutral). May also be a string specifying the path to a grayscale PNG image (white = neutral, black = non-neutral). Required parameter if zmapmethod is set to \code{chauvin}.}
 
 \item{zmapdecoration}{Optional boolean specifying whether the Z-map should be plotted with margins, text (sigma, threshold) and a scale (default: TRUE).}
 
