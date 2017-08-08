@@ -335,18 +335,18 @@ generateCI <- function(stimuli, responses, baseimage, rdata, participants=NA, sa
       # Convert mask to boolean matrix (black == 0 == masked)
       chauvin_mask <- chauvin_mask_matrix == 0
 
-      # Apply the mask to the CI
-      ci[chauvin_mask] <- NA
+      # Created the masked CI
+      ci_masked <- ci[chauvin_mask]
 
       # Calculate average CI pixel value
-      neutral_mean = mean(na.omit(ci))
+      nosignal_mean = mean(na.omit(ci_masked))
 
       # Calculate standard deviation of CI pixel values
-      neutral_sd = sd(na.omit(ci))
+      nosignal_sd = sd(na.omit(ci_masked))
 
       # Calculate Zmap using method of Chauvin (Chauvin et al, 2005)
       zmap = sapply(c(ci), function(x) {
-        (x - neutral_mean) / neutral_sd
+        (x - nosignal_mean) / nosignal_sd
       })
       dim(zmap) <- c(img_size, img_size)
     }
