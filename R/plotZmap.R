@@ -97,9 +97,14 @@ plotZmap <- function(zmap, bgimage = '', sigma, threshold = 3, mask = NULL, deco
     par(mar = c(0, 0, 0, 0))
     plot.window(xlim = c(0, 1), ylim = c(0, 1), xaxs = 'i', yaxs = 'i')
 
-    # If specified, add bgimage
-    if (bgimage != '') {
-      rasterImage(bgimage, 0, 0, 1, 1)
+    # If bgimage parameter is set, check if it is a matrix and if so, add it to
+    # plot
+    if (typeof(bgimage) == 'integer') {
+      if (length(dim(mat)) == 2) {
+        rasterImage(bgimage, 0, 0, 1, 1)
+      } else {
+        warning('bgimage is not a matrix!')
+      }
     }
     # Add Z-map
     raster::plot(raster(zmap), add = T, legend = F)
