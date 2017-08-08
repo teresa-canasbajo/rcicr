@@ -351,9 +351,6 @@ generateCI <- function(stimuli, responses, baseimage, rdata, participants=NA, sa
       dim(zmap) <- c(img_size, img_size)
     }
 
-    print(zmap)
-    str(zmap)
-
     # Pass zmap object to plotZmap for plotting
     plotZmap(zmap = zmap, bgimage = combined, filename = baseimage, sigma = sigma, threshold = threshold, size = img_size, decoration = zmapdecoration)
 
