@@ -40,6 +40,10 @@ batchGenerateCI <- function(data, by, stimuli, responses, baseimage, rdata,
 
     # Get subset of data
     unitdata <- data[data[,by] == unit, ]
+  # Print a deprecation warning
+  warning(paste0("batchGenerateCI is deprecated! You can now use generateCI",
+                 "instead to batch generate individual CIs, using the ",
+                 "'participants' argument."))
 
     # Specify filename for CI PNG
     if (label == '') {
