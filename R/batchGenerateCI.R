@@ -16,10 +16,12 @@
 #' @param targetpath Optional string specifying path to save PNGs to (default: ./cis).
 #' @param label Optional string to insert in file names of PNGs to make them easier to identify.
 #' @param antiCI Optional boolean specifying whether antiCI instead of CI should be computed.
-#' @param scaling Optional string specifying scaling method: \code{none}, \code{constant},  \code{independent} or \code{autoscale} (default).
+#' @param scaling Optional string specifying scaling method: \code{none}, \code{constant},  \code{independent} or \code{dependent} (default).
 #' @param constant Optional number specifying the value used as constant scaling factor for the noise (only works for \code{scaling='constant'}).
 #' @return List of classification image data structures (which are themselves lists of pixel matrix of classification noise only, scaled classification noise only, base image only and combined).
-batchGenerateCI <- function(data, by, stimuli, responses, baseimage, rdata, save_as_png=TRUE, targetpath='./cis', label='', antiCI=FALSE, scaling='autoscale', constant=0.1) {
+batchGenerateCI <- function(data, by, stimuli, responses, baseimage, rdata,
+                            save_as_png=TRUE, targetpath='./cis', label='',
+                            antiCI=FALSE, scaling='dependent', constant=0.1) {
 
   if (scaling == 'autoscale') {
     doAutoscale <- TRUE
