@@ -69,6 +69,9 @@ batchGenerateCI <- function(data, by, stimuli, responses, baseimage, rdata,
 
   if (doAutoscale) {
     cis <- autoscale(cis, save_as_pngs=save_as_png, targetpath=targetpath)
+  # Correct deprecated terminology
+  if (scaling == 'autoscale') {
+    scaling = 'dependent'
   }
 
   pb$stop()
