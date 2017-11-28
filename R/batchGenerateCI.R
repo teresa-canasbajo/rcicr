@@ -23,58 +23,25 @@ batchGenerateCI <- function(data, by, stimuli, responses, baseimage, rdata,
                             save_as_png=TRUE, targetpath='./cis', label='',
                             antiCI=FALSE, scaling='dependent', constant=0.1) {
 
-  if (scaling == 'autoscale') {
-    doAutoscale <- TRUE
-    scaling <- 'none'
-  } else {
-    doAutoscale <- FALSE
-  }
-
-  pb <- dplyr::progress_estimated(length(unique(data[,by])))
-  cis <- list()
-
-  for (unit in unique(data[,by])) {
-
-    # Update progress bar
-    pb$tick()$print()
-
-    # Get subset of data
-    unitdata <- data[data[,by] == unit, ]
   # Print a deprecation warning
   warning(paste0("batchGenerateCI is deprecated! You can now use generateCI",
                  "instead to batch generate individual CIs, using the ",
                  "'participants' argument."))
 
-    # Specify filename for CI PNG
-    if (label == '') {
-      filename <- paste0(baseimage, '_', by, '_', unitdata[1,by])
-    } else {
-      filename <- paste0(baseimage, '_', label, '_', by, '_', unitdata[1,by])
-    }
-
-    # Compute CI with appropriate settings for this subset (Optimize later so rdata file is loaded only once)
-    cis[[filename]] <- generateCI(
-      stimuli=unitdata[,stimuli],
-      responses=unitdata[,responses],
-      baseimage=baseimage,
-      rdata=rdata,
-      save_as_png=save_as_png,
-      filename=paste0(filename, '.png'),
-      targetpath=targetpath,
-      antiCI=antiCI,
-      scaling=scaling,
-      scaling_constant=constant,
-      participants=NA)
-  }
-
-  if (doAutoscale) {
-    cis <- autoscale(cis, save_as_pngs=save_as_png, targetpath=targetpath)
   # Correct deprecated terminology
   if (scaling == 'autoscale') {
     scaling = 'dependent'
   }
 
-  pb$stop()
-  return(cis)
-
+  # Pass arguments to generateCI
+  generateCI(stimuli = data[, stimuli],
+             responses = data[, responses],
+             baseimage = baseimage,
+             rdata = rdata,
+             participants = data[, by],
+             save_individual_cis = save_as_png,
+             targetpath = targetpath,
+             antiCI = antiCI,
+             individual_scaling = scaling,
+             individual_scaling_constant = constant)
 }
