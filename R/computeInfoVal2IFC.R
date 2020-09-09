@@ -24,11 +24,12 @@
 #' @import yesno
 #' @param ci A classification image object (list-type) as returned by generateCI
 #' @param rdata String pointing to .RData file that was created when stimuli were generated. This file contains the contrast parameters of all generated stimuli and possibly its corresponding reference distribution generated with generateReferenceDistribution().
+#' @param random_seed
 #' @param iter Number of iterations for the simulation of the reference distribution (only used if reference distribution is not already pre-generated and present in rdata file)
 #' @param force_gen_ref_dist Boolean specifying whether to override the default behavior to use pre-computed values for the reference distribution for specific task parameters and instead force to recompute the reference distribution (default: FALSE).
 #' @return Informational value (z-score)
 
-computeInfoVal2IFC <- function(target_ci, rdata, iter = 10000, force_gen_ref_dist = FALSE) {
+computeInfoVal2IFC <- function(target_ci, rdata, random_seed, iter = 10000, force_gen_ref_dist = FALSE) {
 
   # RD: To supress notes from R CMD CHECK, but thise should not be necessary -- debug
   ref_seed <- NA
@@ -37,7 +38,7 @@ computeInfoVal2IFC <- function(target_ci, rdata, iter = 10000, force_gen_ref_dis
 
   # Load parameter file (created when generating stimuli)
   load(rdata)
-
+  seed = random_seed # overwrite the initial random seed
   # Check whether reference norms are present or can be looked up from table. If not, re-generate.
   if (!force_gen_ref_dist & !exists("reference_norms", envir=environment(), inherits=FALSE)) {
 
