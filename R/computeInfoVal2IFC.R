@@ -29,7 +29,7 @@
 #' @param force_gen_ref_dist Boolean specifying whether to override the default behavior to use pre-computed values for the reference distribution for specific task parameters and instead force to recompute the reference distribution (default: FALSE).
 #' @return Informational value (z-score)
 
-computeInfoVal2IFC <- function(target_ci, rdata, random_seed, iter = 10000, force_gen_ref_dist = FALSE) {
+computeInfoVal2IFC <- function(target_ci, rdata, random_seed, iter = 10000, force_gen_ref_dist = TRUE) {
 
   # RD: To supress notes from R CMD CHECK, but thise should not be necessary -- debug
   ref_seed <- NA
