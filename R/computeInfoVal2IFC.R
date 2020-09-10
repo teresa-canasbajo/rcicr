@@ -30,7 +30,7 @@
 #' @return Informational value (z-score)
 
 computeInfoVal2IFC <- function(target_ci, rdata, random_seed, iter = 10000, force_gen_ref_dist = TRUE) {
-
+  print('HALLO')
   # RD: To supress notes from R CMD CHECK, but thise should not be necessary -- debug
   ref_seed <- NA
   ref_img_size <- NA
