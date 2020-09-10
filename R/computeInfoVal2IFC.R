@@ -39,7 +39,17 @@ computeInfoVal2IFC <- function(target_ci, rdata, random_seed, iter = 10000, forc
   # Load parameter file (created when generating stimuli)
   load(rdata)
   seed = random_seed # overwrite the initial random seed
-
+  # Reference norms not present in rdata file, re-generate
+  generateReferenceDistribution2IFC(rdata, iter=iter)
+  
+  # Re-load rdata file
+  load(rdata)
+  
+  # Compute reference values
+  ref_median <- median(reference_norms)
+  ref_mad    <- mad(reference_norms)
+  ref_iter   <- length(reference_norms)
+  
   # Check whether reference norms are present or can be looked up from table. If not, re-generate.
   # if (!force_gen_ref_dist & !exists("reference_norms", envir=environment(), inherits=FALSE)) {
   # 
@@ -86,30 +96,30 @@ computeInfoVal2IFC <- function(target_ci, rdata, random_seed, iter = 10000, forc
   #     }
   #   }
   # }
-  yes <- TRUE
-  if (!exists("ref_median", envir=environment(), inherits=FALSE)) {
-
-    if (force_gen_ref_dist == TRUE) {
-
-      # Reference norms not present in rdata file, re-generate
-      generateReferenceDistribution2IFC(rdata, iter=iter)
-
-      # Re-load rdata file
-      load(rdata)
-
-      write("Note that now that this simulated reference distribution has been saved to the .Rdata file, the next time you call computeInfoVal2IFC(), it will not need to be computed again.")
-
-    } else {
-
-      write("Using reference distribution found in rdata file.", stdout())
-      write("HALLO22", stdout())
-    }
-
-    # Compute reference values
-    ref_median <- median(reference_norms)
-    ref_mad    <- mad(reference_norms)
-    ref_iter   <- length(reference_norms)
-  }
+  # yes <- TRUE
+  # if (yes == TRUE) {#(!exists("ref_median", envir=environment(), inherits=FALSE)) {
+  # 
+  #   if (yes == TRUE) {#(!exists("reference_norms", envir=environment(), inherits=FALSE)) {
+  # 
+  #     # Reference norms not present in rdata file, re-generate
+  #     generateReferenceDistribution2IFC(rdata, iter=iter)
+  # 
+  #     # Re-load rdata file
+  #     load(rdata)
+  # 
+  #     write("Note that now that this simulated reference distribution has been saved to the .Rdata file, the next time you call computeInfoVal2IFC(), it will not need to be computed again.")
+  # 
+  #   } else {
+  # 
+  #     write("Using reference distribution found in rdata file.", stdout())
+  #     write("HALLO", stdout())
+  #   }
+  # 
+  #   # Compute reference values
+  #   ref_median <- median(reference_norms)
+  #   ref_mad    <- mad(reference_norms)
+  #   ref_iter   <- length(reference_norms)
+  # }
 
   # Compute informational value metric
   cinorm <- norm(matrix(target_ci[["ci"]]), "f")
