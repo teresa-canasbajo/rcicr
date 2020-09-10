@@ -39,11 +39,7 @@ computeInfoVal2IFC <- function(target_ci, rdata, random_seed, iter = 10000, forc
   # Load parameter file (created when generating stimuli)
   load(rdata)
   seed = random_seed # overwrite the initial random seed
-  # Reference norms not present in rdata file, re-generate
-  generateReferenceDistribution2IFC(rdata, iter=iter)
-  
-  # Re-load rdata file
-  load(rdata)
+
   # Check whether reference norms are present or can be looked up from table. If not, re-generate.
   # if (!force_gen_ref_dist & !exists("reference_norms", envir=environment(), inherits=FALSE)) {
   # 
@@ -91,9 +87,9 @@ computeInfoVal2IFC <- function(target_ci, rdata, random_seed, iter = 10000, forc
   #   }
   # }
   yes <- TRUE
-  if (yes == TRUE) {#(!exists("ref_median", envir=environment(), inherits=FALSE)) {
+  if (!exists("ref_median", envir=environment(), inherits=FALSE)) {
 
-    if (yes == TRUE) {#(!exists("reference_norms", envir=environment(), inherits=FALSE)) {
+    if (!exists("reference_norms", envir=environment(), inherits=FALSE)) {
 
       # Reference norms not present in rdata file, re-generate
       generateReferenceDistribution2IFC(rdata, iter=iter)
