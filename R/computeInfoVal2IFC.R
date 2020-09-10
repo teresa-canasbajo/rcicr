@@ -40,55 +40,55 @@ computeInfoVal2IFC <- function(target_ci, rdata, random_seed, iter = 10000, forc
   load(rdata)
   seed = random_seed # overwrite the initial random seed
   # Check whether reference norms are present or can be looked up from table. If not, re-generate.
-  if (!force_gen_ref_dist & !exists("reference_norms", envir=environment(), inherits=FALSE)) {
+  # if (!force_gen_ref_dist & !exists("reference_norms", envir=environment(), inherits=FALSE)) {
+  # 
+  #   # Pre-computed reference distribution table (TODO: read from external file)
+  #   ref_lookup <- tribble(
+  #     ~ref_seed, ~ref_img_size, ~ref_iter, ~ref_n_trials, ~ref_median,   ~ref_mad,
+  #   #  1,         512,           10000,     100,           1097.7394,     52.54232,
+  #   #  1,         512,           10000,     300,           634.0318,      30.51781,
+  #   #  1,         512,           10000,     500,           490.4709,      23.71276,
+  #   #  1,         512,           10000,     1000,          347.2960,      16.64761
+  #   )
+  # 
+  #   # Check whether we have a perfect match
+  #   ref_values <- ref_lookup %>%
+  #     filter(ref_seed==seed, ref_img_size==img_size, ref_n_trials==n_trials, ref_iter==iter)
+  # 
+  #   if (ref_values %>% count() == 1) {
+  #     # We have a match, use the values
+  #     write("Pre-computed reference values matching your exact parameters found.", stdout())
+  # 
+  #     ref_median <- ref_values$ref_median
+  #     ref_mad    <- ref_values$ref_mad
+  #     ref_iter   <- ref_values$ref_iter
+  # 
+  #   } else {
+  #     # Check whether at least seed, img_size, and n_trials match
+  #     ref_values <- ref_lookup %>%
+  #       filter(ref_seed==seed, ref_img_size==img_size, ref_n_trials==n_trials)
+  # 
+  #     if (ref_values %>% count() > 0) {
+  #       write("I found pre-computed reference values that matched seed, image size, and number of trials, but not the number of reference distribution iterations.", stdout())
+  #       max_ref_iter <- as.numeric(ref_values %>% summarise(max(ref_iter)))
+  #       user_response <- yesno::yesno(paste0("I did find pre-computed values for ", max_ref_iter, " iterations matching all other parameters. Do you want to use those instead?"))
+  # 
+  #       if (user_response) {
+  #         write(paste0("Using pre-computed reference values for ", max_ref_iter, " instead of ", iter, " iterations."), stdout())
+  #         ref_values <- ref_lookup %>%
+  #           filter(ref_seed==seed, ref_img_size==img_size, ref_n_trials==n_trials, ref_iter==max_ref_iter)
+  # 
+  #         ref_median <- ref_values$ref_median
+  #         ref_mad    <- ref_values$ref_mad
+  #         ref_iter   <- ref_values$ref_iter
+  #       }
+  #     }
+  #   }
+  # }
 
-    # Pre-computed reference distribution table (TODO: read from external file)
-    ref_lookup <- tribble(
-      ~ref_seed, ~ref_img_size, ~ref_iter, ~ref_n_trials, ~ref_median,   ~ref_mad,
-    #  1,         512,           10000,     100,           1097.7394,     52.54232,
-    #  1,         512,           10000,     300,           634.0318,      30.51781,
-    #  1,         512,           10000,     500,           490.4709,      23.71276,
-    #  1,         512,           10000,     1000,          347.2960,      16.64761
-    )
+  if TRUE { #(!exists("ref_median", envir=environment(), inherits=FALSE)) {
 
-    # Check whether we have a perfect match
-    ref_values <- ref_lookup %>%
-      filter(ref_seed==seed, ref_img_size==img_size, ref_n_trials==n_trials, ref_iter==iter)
-
-    if (ref_values %>% count() == 1) {
-      # We have a match, use the values
-      write("Pre-computed reference values matching your exact parameters found.", stdout())
-
-      ref_median <- ref_values$ref_median
-      ref_mad    <- ref_values$ref_mad
-      ref_iter   <- ref_values$ref_iter
-
-    } else {
-      # Check whether at least seed, img_size, and n_trials match
-      ref_values <- ref_lookup %>%
-        filter(ref_seed==seed, ref_img_size==img_size, ref_n_trials==n_trials)
-
-      if (ref_values %>% count() > 0) {
-        write("I found pre-computed reference values that matched seed, image size, and number of trials, but not the number of reference distribution iterations.", stdout())
-        max_ref_iter <- as.numeric(ref_values %>% summarise(max(ref_iter)))
-        user_response <- yesno::yesno(paste0("I did find pre-computed values for ", max_ref_iter, " iterations matching all other parameters. Do you want to use those instead?"))
-
-        if (user_response) {
-          write(paste0("Using pre-computed reference values for ", max_ref_iter, " instead of ", iter, " iterations."), stdout())
-          ref_values <- ref_lookup %>%
-            filter(ref_seed==seed, ref_img_size==img_size, ref_n_trials==n_trials, ref_iter==max_ref_iter)
-
-          ref_median <- ref_values$ref_median
-          ref_mad    <- ref_values$ref_mad
-          ref_iter   <- ref_values$ref_iter
-        }
-      }
-    }
-  }
-
-  if (!exists("ref_median", envir=environment(), inherits=FALSE)) {
-
-    if (!exists("reference_norms", envir=environment(), inherits=FALSE)) {
+    if TRUE {#(!exists("reference_norms", envir=environment(), inherits=FALSE)) {
 
       # Reference norms not present in rdata file, re-generate
       generateReferenceDistribution2IFC(rdata, iter=iter)
