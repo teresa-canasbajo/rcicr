@@ -10,11 +10,11 @@
 #' @param iter Number of iterations for the simulation (i.e., the number of norms generated with classification images based on random responding).
 #' @return Nothing.
 
-generateReferenceDistribution2IFC <- function(rdata, iter=10000) {
+generateReferenceDistribution2IFC <- function(rdata, random_seed, iter=10000) {
 
   # Load parameter file (created when generating stimuli)
   load(rdata)
-
+  seed = random_seed
   # Re-generate stimuli based on rdata parameters in matrix form
   write("Re-generating stimuli based on rdata file, please wait...", stdout())
   stimuli <- generateStimuli2IFC(base_face_files, n_trials, img_size, seed=seed, noise_type=noise_type,ncores=parallel::detectCores()-1, return_as_dataframe=TRUE, save_as_png=FALSE, save_rdata=FALSE)

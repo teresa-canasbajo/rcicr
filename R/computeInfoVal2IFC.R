@@ -40,7 +40,7 @@ computeInfoVal2IFC <- function(target_ci, rdata, random_seed, iter = 10000, forc
   load(rdata)
   seed = random_seed # overwrite the initial random seed
   # Reference norms not present in rdata file, re-generate
-  generateReferenceDistribution2IFC(rdata, iter=iter)
+  generateReferenceDistribution2IFC(rdata, random_seed, iter=iter)
   
   # Re-load rdata file
   load(rdata)
