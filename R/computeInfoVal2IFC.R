@@ -102,7 +102,7 @@ computeInfoVal2IFC <- function(target_ci, rdata, random_seed, iter = 10000, forc
     } else {
 
       write("Using reference distribution found in rdata file.", stdout())
-      write("HALLO", stdout())
+      write("HALLO22", stdout())
     }
 
     # Compute reference values
