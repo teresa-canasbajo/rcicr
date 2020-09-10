@@ -86,9 +86,9 @@ computeInfoVal2IFC <- function(target_ci, rdata, random_seed, iter = 10000, forc
   #   }
   # }
   yes <- TRUE
-  if (yes) { #(!exists("ref_median", envir=environment(), inherits=FALSE)) {
+  if (!exists("ref_median", envir=environment(), inherits=FALSE)) {
 
-    if (yes) {#(!exists("reference_norms", envir=environment(), inherits=FALSE)) {
+    if (!exists("reference_norms", envir=environment(), inherits=FALSE)) {
 
       # Reference norms not present in rdata file, re-generate
       generateReferenceDistribution2IFC(rdata, iter=iter)
