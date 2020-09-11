@@ -47,6 +47,7 @@ generateReferenceDistribution2IFC <- function(rdata, random_seed, iter=10000) {
 
   # Save reference norms to rdata file
   write("\nSaving simulated reference distribution to rdata file...", stdout())
+  write(paste0('Random seed inside generateRef: ', seed), , stdout() 
   rm(stimuli, responses, pb, iter, ci)
   save(list=ls(all.names=TRUE), file=rdata, envir=environment())
 

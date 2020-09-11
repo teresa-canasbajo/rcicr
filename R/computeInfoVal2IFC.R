@@ -30,7 +30,6 @@
 #' @return Informational value (z-score)
 
 computeInfoVal2IFC <- function(target_ci, rdata, random_seed, iter = 10000, force_gen_ref_dist = TRUE) {
-  write('HALLO')
   # RD: To supress notes from R CMD CHECK, but thise should not be necessary -- debug
   ref_seed <- NA
   ref_img_size <- NA
@@ -40,11 +39,12 @@ computeInfoVal2IFC <- function(target_ci, rdata, random_seed, iter = 10000, forc
   load(rdata)
   seed = random_seed # overwrite the initial random seed
   # Reference norms not present in rdata file, re-generate
+  write(paste0('Random seed before generateRef: ', seed), , stdout() 
   generateReferenceDistribution2IFC(rdata, random_seed, iter=iter)
   
   # Re-load rdata file
   load(rdata)
-  
+  write(paste0('Random seed after generateRef: ', seed), , stdout() 
   # Compute reference values
   ref_median <- median(reference_norms)
   ref_mad    <- mad(reference_norms)
